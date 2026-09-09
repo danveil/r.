@@ -1,0 +1,81 @@
+.partner-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+.read-only {
+  font-size: 0.75rem;
+  color: var(--muted);
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+}
+.freshness {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0 0 22px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.freshness strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+.partner-hero {
+  padding: 30px 22px;
+}
+.partner-hero h1 {
+  margin: 15px 0;
+}
+.partner-cycle-day {
+  font-size: 1.35rem;
+  margin-bottom: 12px;
+}
+.partner-calendar {
+  gap: 8px 5px;
+  margin: 14px 0 24px;
+}
+.partner-calendar .calendar-day {
+  min-height: 56px;
+}
+.partner-nav {
+  grid-template-columns: repeat(3, 1fr);
+}
+.pairing-qr {
+  display: block;
+  max-width: min(100%, 360px);
+  height: auto;
+  margin: 0 auto;
+  border-radius: 16px;
+}
+.shared-categories {
+  padding-left: 22px;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+.sharing-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 15px 0;
+}
+.partner-sharing > .secondary {
+  width: 100%;
+}
+.partner-sharing .radio-choice input[type='checkbox'],
+.sheet .radio-choice input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--rose);
+  flex-shrink: 0;
+}
+.partner-shell h1 {
+  overflow-wrap: anywhere;
+}
