@@ -88,6 +88,9 @@ export function Onboarding({
           <button className="text-button" onClick={onRestore}>
             Restore from a backup
           </button>
+          <button className="text-button" onClick={() => location.assign('/partner/setup')}>
+            I have a partner setup code
+          </button>
         </div>
       ) : (
         <form

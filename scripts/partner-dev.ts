@@ -47,7 +47,9 @@ const server = createServer(async (incoming, outgoing) => {
       outgoing.end();
       return;
     }
-    const pathname = url.pathname === '/' || url.pathname === '/partner' ? '/index.html' : url.pathname;
+    const pathname = ['/', '/partner', '/partner/setup'].includes(url.pathname)
+      ? '/index.html'
+      : url.pathname;
     const file = resolve(root, '.' + pathname);
     if (!file.startsWith(root + sep)) {
       outgoing.writeHead(403);

@@ -6,10 +6,12 @@ import type { AppData } from './types';
 import type { Snapshot } from './partner/protocol';
 import { partnerDB } from './partner/storage';
 const PartnerView = lazy(() => import('./partner/PartnerView'));
+const PartnerSetup = lazy(() => import('./partner/PartnerSetup'));
 // Fragment material is captured in memory and removed before asynchronous work or rendering.
 const invitationFragment =
   location.pathname === '/partner' && location.hash.startsWith('#invite=') ? location.hash : undefined;
-if (invitationFragment) history.replaceState(null, '', '/partner');
+// Keep the fragment in this mount's memory so a usable code remains available, but install from the stable root.
+if (invitationFragment) history.replaceState(null, '', '/');
 class ErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() {
@@ -32,7 +34,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean
 async function start() {
   let partnerRole = location.pathname === '/partner';
   try {
-    partnerRole ||= !!(await partnerDB.preferences.get('role'));
+    partnerRole ||= location.hash !== '#primary' && !!(await partnerDB.preferences.get('role'));
   } catch {
     /* The primary app presents its own storage recovery screen. */
   }
@@ -52,13 +54,13 @@ async function start() {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <ErrorBoundary>
-        {partnerRole && !demoData ? (
+        {(invitationFragment || location.pathname === '/partner/setup') && !demoData && !demoStatus ? (
+          <Suspense fallback={<main className="loading-page">Opening Partner Setup…</main>}>
+            <PartnerSetup fragment={invitationFragment} />
+          </Suspense>
+        ) : partnerRole && !demoData ? (
           <Suspense fallback={<main className="loading-page">Opening Partner View…</main>}>
-            <PartnerView
-              fragment={demoStatus ? undefined : invitationFragment}
-              demoSnapshot={demoSnapshot}
-              demoStatus={demoStatus}
-            />
+            <PartnerView demoSnapshot={demoSnapshot} demoStatus={demoStatus} />
           </Suspense>
         ) : (
           <App demoData={demoData} />

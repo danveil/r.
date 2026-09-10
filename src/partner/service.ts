@@ -136,8 +136,9 @@ export async function acceptInvitation(invite: Invitation): Promise<Snapshot> {
         state: 'accepting',
       });
   });
+  const snapshot = await refreshPartner();
   await partnerDB.preferences.put({ id: 'role', value: 'partner' });
-  return refreshPartner();
+  return snapshot;
 }
 export async function refreshPartner(): Promise<Snapshot> {
   const connection = await partnerDB.partner.get('partner');

@@ -20,6 +20,9 @@ async function onboard(page: Page, offset = 12, ongoing = false, url = '/') {
 }
 
 test('daily journey stays private, persists, exports and restores', async ({ page, context }) => {
+  // Keep this persistence journey on one day even when the real run crosses midnight.
+  // Midnight/resume behavior has its own date and useToday tests.
+  await page.clock.setFixedTime(new Date());
   const outbound: string[] = [];
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));

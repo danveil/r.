@@ -79,3 +79,39 @@
 .partner-shell h1 {
   overflow-wrap: anywhere;
 }
+.setup-steps {
+  margin: 0;
+  padding-left: 24px;
+  line-height: 1.6;
+}
+.setup-steps li {
+  padding: 0 0 6px 4px;
+}
+.partner-setup header {
+  margin-bottom: 0;
+}
+.partner-setup {
+  gap: 16px;
+}
+.partner-setup > h1 {
+  font-size: 2rem;
+  margin-bottom: 0;
+}
+.partner-setup > .eyebrow {
+  margin-bottom: 0;
+}
+.partner-setup section ul {
+  margin: 8px 0;
+  padding-left: 22px;
+}
+.partner-setup textarea {
+  width: 100%;
+  resize: vertical;
+  overflow-wrap: anywhere;
+}
+.partner-setup .radio-choice input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  accent-color: var(--rose);
+}

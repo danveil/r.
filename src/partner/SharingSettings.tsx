@@ -7,6 +7,8 @@ import { partnerDB, type PrimaryConnection } from './storage';
 import { enableSharing, stopSharing, syncPrimary } from './service';
 import { invitationLink } from './crypto';
 import './partner.css';
+import { SetupCodeCopy } from './SetupCodeCopy';
+import { parseInvitation } from './crypto';
 
 export default function SharingSettings({ demo = false }: { demo?: boolean }) {
   const [connection, setConnection] = useState<PrimaryConnection | null>(null);
@@ -78,6 +80,11 @@ export default function SharingSettings({ demo = false }: { demo?: boolean }) {
   return (
     <section className="settings-section partner-sharing">
       <h2>Partner sharing</h2>
+      {!demo && (
+        <button className="text-button" onClick={() => location.assign('/partner/setup')}>
+          Set up Partner View on this device
+        </button>
+      )}
       {demo ? (
         <p>Off in this demo. Sample information is never uploaded.</p>
       ) : !connection ? (
@@ -219,6 +226,11 @@ export default function SharingSettings({ demo = false }: { demo?: boolean }) {
                 onFocus={(e) => e.target.select()}
               />
             </details>
+            <p className="small">
+              Send the invitation link to your partner. They can use the setup code to finish inside Rayang
+              from their Home Screen.
+            </p>
+            <SetupCodeCopy invite={parseInvitation(new URL(link).hash)} />
             <ErrorMessage message={error} />
             <p role="status" className="small">
               {message}

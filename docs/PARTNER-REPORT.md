@@ -1,5 +1,7 @@
 # Rayang Partner View — engineering report
 
+This records the v0.2 implementation baseline. Its Safari-first pairing instructions are superseded by the [v0.2.1 portable handoff report](PARTNER-HANDOFF-REPORT.md) and the updated security/deployment guides. Do not rely on Safari state transferring into a Home Screen installation.
+
 Implemented and locally validated on 9 September 2026. Ready for staging validation; not deployed or certified for physical iPhone use. All test histories were synthetic. The original application's live browser data was not accessed.
 
 1. **Baseline.** Existing React 19/TypeScript/Vite PWA with Dexie v1, local date-only predictions, four primary screens, JSON backup/restore and offline support. Baseline: 72 unit/interaction tests and 14 browser tests. The initial source tree was uncommitted/untracked and has been preserved; no reset, commit or push was performed.

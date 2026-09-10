@@ -49,6 +49,20 @@ it('does no requests while sharing is off', async () => {
   await syncPrimary(false, await readData());
   expect(network).not.toHaveBeenCalled();
 });
+it('does not activate partner mode before a successful claim and decrypted cache write', async () => {
+  await enableSharing({ current: true, period: false, fertility: false });
+  const c = (await partnerDB.primary.get('primary'))!;
+  const invite: Invitation = { version: 1, id: c.id, key: c.key, invitation: c.invitation };
+  network.mockRejectedValueOnce(new TypeError('offline'));
+  await expect(acceptInvitation(invite)).rejects.toThrow('Couldn’t connect');
+  expect(await partnerDB.preferences.get('role')).toBeUndefined();
+  expect((await partnerDB.partner.get('partner'))?.state).toBe('accepting');
+  const reader = (await partnerDB.partner.get('partner'))!.read;
+  await acceptInvitation(invite);
+  expect((await partnerDB.preferences.get('role'))?.value).toBe('partner');
+  expect((await partnerDB.partner.get('partner'))?.read).toBe(reader);
+  expect((await partnerDB.partner.get('partner'))?.envelope).toBeDefined();
+});
 it('recovers a lost create response without issuing new credentials', async () => {
   network.mockImplementationOnce(async (url: string, init: RequestInit) => {
     await partnerApi(new Request(`https://example.test${url}`, init), store);

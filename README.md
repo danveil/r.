@@ -45,7 +45,11 @@ Stop Partner Sharing before importing or deleting primary history. A pending off
 
 Primary: **Settings → Partner sharing → Enable → select categories → Confirm → QR or private pairing link**. All three categories start unchecked. Invitations expire in ten minutes and have one successful claimant. A retry by that same claimant is safe; another device needs a new invitation after the primary stops the old relationship. To change categories, stop and pair again with new keys.
 
-Partner: open the invitation, review the categories, and press **Accept Partner View**. Home, Calendar and Settings are read-only. The date and time identify the last shared snapshot; old data is marked stale and never recalculated as fresh. Foreground/manual refresh fetches updates. A connection unavailable at the API clears the cached snapshot and credentials; temporary network failures retain the last valid cache. **Disconnect this device** clears them locally.
+Partner on iPhone: open the invitation in Safari. The **Partner Setup** page keeps it unclaimed. Add the root Rayang app to Home Screen if needed, press **Copy setup code**, then open Rayang from Home Screen. Choose **I have a partner setup code**, paste it, review the categories and press **Accept Partner View**. This creates the pairing in the installed app's own storage; it does **not** depend on Safari and the PWA sharing IndexedDB. Existing installations can use **Settings → Set up Partner View on this device**. If an invitation opens directly inside standalone Rayang, copy/paste is unnecessary.
+
+Home, Calendar and Settings remain read-only. The date and time identify the last shared snapshot; old data is marked stale and never recalculated as fresh. Foreground/manual refresh fetches updates. A connection unavailable at the API clears the cached snapshot and credentials; temporary network failures retain the last valid cache. **Disconnect this device** clears them locally.
+
+Setup codes carry the existing high-entropy invitation capability and client-only decryption key, never health records or a writer capability. They expire with the ten-minute invitation. Keep them private: clipboard access or a leaked code can allow someone to claim the pending invitation. Copying happens only when requested; Rayang does not read or automatically clear the clipboard. Remove saved copies and replace clipboard contents after setup. The installed app generates its own reader capability. Another clean device cannot reuse an already claimed setup code, although existing reader credentials can still be cloned by someone with device access. Revocation continues to apply.
 
 Sync occurs on meaningful cycle changes, opening/resuming the primary app and **Sync now**. Diary-only edits do not upload. There is no polling or background push. Active shares expire after 30 days without publication. Keep invitations private: someone who obtains one before acceptance can claim it. Timing can be inferred from other timing categories even when fertility estimates are withheld.
 
@@ -114,6 +118,8 @@ Navigation uses URL hashes so all four screens are reachable offline. A static S
 ## Install on iPhone
 
 Open the final HTTPS URL in Safari → **Share → Add to Home Screen**. Launch once online and wait for the offline-ready notice. Then test in Airplane Mode. The manifest uses standalone display, full app icons and a maskable icon; Apple metadata and a touch icon are included.
+
+For Partner View, follow the setup-code handoff above rather than accepting in Safari and expecting its storage to transfer. The stable manifest ID, scope and start URL remain `/`. The exact two-context physical-iPhone checklist is in [PARTNER-DEPLOYMENT.md](docs/PARTNER-DEPLOYMENT.md); browser automation does not certify physical iOS behavior. See [the v0.2.1 handoff report](docs/PARTNER-HANDOFF-REPORT.md).
 
 Updates are offered after a new worker is ready, with **Update now / Later**. Open sheets suppress the notice, so your own update action does not interrupt a form. Test a real update on the installed iPhone before regular use. iOS installation, storage behavior, keyboard geometry and status-bar appearance need physical-device confirmation.
 

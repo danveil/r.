@@ -4,39 +4,26 @@ import { ErrorMessage, Sheet } from '../components/Sheet';
 import { UpdateNotice } from '../components/UpdateNotice';
 import { prettyDate, todayKey, weekDates } from '../lib/dates';
 import { PHASE_LABELS } from '../lib/prediction';
-import { cachedPartner, previewInvitation, acceptInvitation, refreshPartner } from './service';
-import { parseInvitation } from './crypto';
+import { cachedPartner, refreshPartner } from './service';
+
 import { PartnerError } from './api';
 import { clearPartner, partnerDB } from './storage';
 import { dayLabel, dayPhase } from './snapshot';
-import { PERMISSION_LABELS, type Invitation, type SharedDay, type Snapshot } from './protocol';
+import { PERMISSION_LABELS, type SharedDay, type Snapshot } from './protocol';
 import './partner.css';
 
 export default function PartnerView({
-  fragment,
   demoSnapshot,
   demoStatus,
 }: {
-  fragment?: string;
   demoSnapshot?: Snapshot;
   demoStatus?: string;
 }) {
-  const [invite] = useState<Invitation | null>(() => {
-    try {
-      return fragment ? parseInvitation(fragment) : null;
-    } catch {
-      return null;
-    }
-  });
   const [snapshot, setSnapshot] = useState<Snapshot | null>(demoSnapshot ?? null);
-  const [preview, setPreview] = useState<Snapshot | null>(null);
   const [tab, setTab] = useState<'home' | 'calendar' | 'settings'>('home');
-  const [error, setError] = useState(
-    fragment && !invite ? 'This invitation is not valid. Ask for a new one.' : '',
-  );
+  const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
-  const [accepted, setAccepted] = useState(false);
   const [connected, setConnected] = useState(false);
   const [selected, setSelected] = useState<SharedDay | null>(null);
   const [disconnect, setDisconnect] = useState(false);
@@ -64,49 +51,36 @@ export default function PartnerView({
   useEffect(() => {
     if (demo) return;
     let alive = true;
-    if (invite) {
-      setBusy(true);
-      void previewInvitation(invite)
-        .then((value) => {
-          if (alive) setPreview(value);
-        })
-        .catch((err) => {
-          if (alive) setError(err instanceof PartnerError ? err.message : 'Couldn’t open this invitation.');
-        })
-        .finally(() => {
-          if (alive) setBusy(false);
-        });
-    } else
-      void (async () => {
-        const connection = await partnerDB.partner.get('partner');
-        if (!alive) return;
-        setConnected(!!connection);
-        if (!connection) return;
-        try {
-          const cached = await cachedPartner();
-          if (alive) setSnapshot(cached);
-        } catch {
-          if (alive) setError('We couldn’t read the saved cycle. Try pairing again.');
-        }
-        if (alive) await refresh();
-      })().catch(() => {
-        if (alive)
-          setError('Device storage could not be opened. Check browser storage permissions and try again.');
-      });
+    void (async () => {
+      const connection = await partnerDB.partner.get('partner');
+      if (!alive) return;
+      setConnected(!!connection);
+      if (!connection) return;
+      try {
+        const cached = await cachedPartner();
+        if (alive) setSnapshot(cached);
+      } catch {
+        if (alive) setError('We couldn’t read the saved cycle. Try pairing again.');
+      }
+      if (alive) await refresh();
+    })().catch(() => {
+      if (alive)
+        setError('Device storage could not be opened. Check browser storage permissions and try again.');
+    });
     return () => {
       alive = false;
     };
-    // The opening invitation is immutable for this mount.
+    // Load this connection once; foreground refresh is registered separately.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     if (demo) return;
     const online = () => {
       setOffline(!navigator.onLine);
-      if (navigator.onLine && (!invite || accepted)) void refresh();
+      if (navigator.onLine) void refresh();
     };
     const visible = () => {
-      if (document.visibilityState === 'visible' && (!invite || accepted)) void refresh();
+      if (document.visibilityState === 'visible') void refresh();
     };
     window.addEventListener('online', online);
     window.addEventListener('offline', online);
@@ -117,7 +91,7 @@ export default function PartnerView({
       document.removeEventListener('visibilitychange', visible);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [invite, accepted, demo]);
+  }, [demo]);
   const categories = (value: Snapshot) => (
     <ul className="shared-categories">
       {(Object.keys(PERMISSION_LABELS) as (keyof typeof PERMISSION_LABELS)[])
@@ -169,51 +143,14 @@ export default function PartnerView({
           </div>
           <span className="read-only">Partner View · Read only</span>
         </header>
-        {invite && !accepted ? (
-          <div className="stack">
-            <p className="eyebrow">An invitation, just for you</p>
-            <h1>You’ve been invited to Partner View.</h1>
-            {preview ? (
-              <>
-                <p>Shared with you</p>
-                {categories(preview)}
-                <p>Your access is read-only. Diary, symptoms, moods and private notes are not included.</p>
-                <button
-                  className="primary"
-                  disabled={busy}
-                  onClick={async () => {
-                    setBusy(true);
-                    setError('');
-                    try {
-                      const next = await acceptInvitation(invite);
-                      setSnapshot(next);
-                      setAccepted(true);
-                      setConnected(true);
-                      setPreview(null);
-                    } catch (err) {
-                      setError(err instanceof Error ? err.message : 'Couldn’t accept this invitation.');
-                    } finally {
-                      setBusy(false);
-                    }
-                  }}
-                >
-                  Accept Partner View
-                </button>
-              </>
-            ) : (
-              <p>
-                {busy
-                  ? 'Opening your invitation…'
-                  : 'Ask the primary user for a fresh invitation, then open it on this device.'}
-              </p>
-            )}
-            <button className="secondary" disabled={busy} onClick={() => location.assign('/partner')}>
-              Cancel invitation
-            </button>
-          </div>
-        ) : !snapshot ? (
+        {!snapshot ? (
           <div className="stack">
             <h1>A shared rhythm</h1>
+            {!demo && (
+              <button className="secondary" onClick={() => location.assign('/partner/setup')}>
+                I have a partner setup code
+              </button>
+            )}
             <p>
               {message ||
                 (demoStatus === 'revoked'
@@ -344,6 +281,11 @@ export default function PartnerView({
             {tab === 'settings' && (
               <>
                 <h1>Your connection</h1>
+                {!demo && (
+                  <button className="text-button" onClick={() => location.assign('/#primary')}>
+                    Return to my cycle
+                  </button>
+                )}
                 <section className="settings-section">
                   <h2>Shared categories</h2>
                   {categories(snapshot)}
@@ -369,8 +311,9 @@ export default function PartnerView({
                   <details>
                     <summary>Install Partner View on iPhone</summary>
                     <p>
-                      After accepting, use Safari → Share → Add to Home Screen. This device will reopen
-                      Partner View. Open once online before using the cached view offline.
+                      Install Rayang from Safari → Share → Add to Home Screen. Finish pairing inside the
+                      installed app with a fresh invitation’s setup code. Pairing saved in Safari may not
+                      appear in Home Screen Rayang. Open once online before using the cached view offline.
                     </p>
                   </details>
                 </section>
@@ -443,7 +386,7 @@ export default function PartnerView({
           </div>
         </Sheet>
       )}
-      <UpdateNotice formOpen={!!selected || disconnect || (!!invite && !accepted)} />
+      <UpdateNotice formOpen={!!selected || disconnect} />
     </div>
   );
 }

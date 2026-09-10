@@ -47,7 +47,7 @@ export async function offlineServer() {
     }
     const file = resolve(
       root,
-      '.' + (pathname === '/' || pathname === '/partner' ? '/index.html' : pathname),
+      '.' + (['/', '/partner', '/partner/setup'].includes(pathname) ? '/index.html' : pathname),
     );
     if (!file.startsWith(root + sep)) {
       res.writeHead(403);
