@@ -23,6 +23,8 @@ These are synthetic test fixtures, not anyone’s personal information. Browser 
 
 All source cycle events, diary content and preferences live in **IndexedDB on the current browser/device**, through Dexie. Predictions are calculated locally. With Partner Sharing off, there are no sharing API calls or health-data uploads. There are no external fonts, analytics, tracking pixels, remote error logs or accounts. The service worker caches only app assets.
 
+Your history stays on this device unless you enable Partner Sharing. Then only the cycle information you choose is shared as encrypted data; diary, symptoms, moods and private notes stay local. Downloaded backups are a separate, explicit export of readable personal information.
+
 After explicit consent, a small allowlisted snapshot of the selected categories is encrypted with AES-256-GCM and synchronized to the site's capability-protected API. Diary, symptoms, moods, private notes, ovulation observations, backups and full settings never enter this payload. The backend has ciphertext and hashed capabilities, never the encryption key. The partner has read-only access. See [the security design](docs/PARTNER-SECURITY.md) and [engineering report](docs/PARTNER-REPORT.md).
 
 Your hosting provider still receives normal requests for the static application and may retain standard access logs (for example, IP address and asset paths). Health data is not included in those requests. Do not enable Netlify Analytics, injected scripts, or external tracking integrations.
@@ -113,13 +115,15 @@ For example, `http://127.0.0.1:5173/?demo=fertile` shows an explicitly labeled t
 4. Deploy over HTTPS. Do not add data collection integrations or injected scripts. A restrictive Content Security Policy, no-referrer policy and anti-framing headers are included.
 5. Complete the [staging API/storage checklist](docs/PARTNER-DEPLOYMENT.md), then test onboarding, offline use, backup/restore and two-device sharing on the intended final origin with synthetic data.
 
-Navigation uses URL hashes so all four screens are reachable offline. A static SPA fallback is also configured. Hashed assets may be cached immutably; `sw.js` and `index.html` are revalidated. Deployment configuration is ready; connecting GitHub and publishing to your chosen Netlify account are manual steps.
+Navigation uses URL hashes so all four screens are reachable offline. A static SPA fallback is also configured. Hashed assets may be cached immutably; `sw.js` and `index.html` are revalidated. A deployment now exists at `https://rayangtr.netlify.app`. Future publishing remains an explicit release step; local hardening changes are not automatically deployed.
 
 ## Install on iPhone
 
 Open the final HTTPS URL in Safari → **Share → Add to Home Screen**. Launch once online and wait for the offline-ready notice. Then test in Airplane Mode. The manifest uses standalone display, full app icons and a maskable icon; Apple metadata and a touch icon are included.
 
 For Partner View, follow the setup-code handoff above rather than accepting in Safari and expecting its storage to transfer. The stable manifest ID, scope and start URL remain `/`. The exact two-context physical-iPhone checklist is in [PARTNER-DEPLOYMENT.md](docs/PARTNER-DEPLOYMENT.md); browser automation does not certify physical iOS behavior. See [the v0.2.1 handoff report](docs/PARTNER-HANDOFF-REPORT.md).
+
+Status recorded 10 September 2026: **user-reported physical iPhone verification passed** for Safari invitation, setup-code import in Home Screen Rayang, Partner View activation, close/reopen persistence, primary update synchronization, revocation and old-code rejection. Codex did not independently perform physical-device testing. See [final hardening](docs/FINAL-HARDENING.md) for the current release recommendation and development-tool maintenance note.
 
 Updates are offered after a new worker is ready, with **Update now / Later**. Open sheets suppress the notice, so your own update action does not interrupt a form. Test a real update on the installed iPhone before regular use. iOS installation, storage behavior, keyboard geometry and status-bar appearance need physical-device confirmation.
 
@@ -150,4 +154,4 @@ Browser dependencies: React, React DOM, date-fns, Dexie and lazy QR generation w
 
 MIT is recommended for a small educational/personal open-source application; an [MIT license](LICENSE) is included. Confirm the license choice before publishing.
 
-Potential future refinements include an independent protocol audit, a carefully designed encrypted export option, and optional device-bound credentials. These are not implemented. Accounts, full-database cloud backup and medical modes remain absent.
+The automated [security audit](docs/FINAL-SECURITY-AUDIT.md) and [final hardening](docs/FINAL-HARDENING.md) record the current review. An independent human protocol review remains a possible future step. Other potential refinements include a carefully designed encrypted export option and optional device-bound credentials; these are not implemented. Accounts, full-database cloud backup and medical modes remain absent.

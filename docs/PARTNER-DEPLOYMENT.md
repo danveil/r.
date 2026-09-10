@@ -1,6 +1,6 @@
 # Partner View deployment and device checks
 
-The repository implementation is ready for staging verification. No hosted site, Netlify account, paid service, repository push or production relationship was created by this task.
+The original implementation run did not create a hosted site, Netlify account, paid service, repository push or production relationship. A deployment now exists at `https://rayangtr.netlify.app`; see [FINAL-HARDENING.md](FINAL-HARDENING.md) for safe hosted checks and remaining operational verification.
 
 ## Configuration
 
@@ -33,7 +33,9 @@ For platform integration, install Netlify CLI, authenticate, link the staging si
 6. Confirm scheduled expiry cleanup and tombstone retention using synthetic records. Reads deny immediately at expiry; daily cleanup is best effort and platform backups may retain deleted storage for the platform's own retention period.
 7. Turn sharing off and verify ordinary tracking makes no sharing API requests. Verify original data survives a deployed update, export/import still works, and backups contain no sharing credentials.
 
-## Physical iPhones — still required
+## Physical iPhones — reported results and remaining checklist
+
+Status recorded 10 September 2026: **user-reported physical iPhone verification passed** for Safari invitation → setup code → Home Screen Rayang → import/accept → close/reopen persistence → primary cycle update synchronization → revocation → old-code rejection. Codex did not independently perform physical-device testing. This supersedes the earlier pending handoff status. The detailed list below remains a reusable regression checklist; the report does not establish every accessibility, fallback, offline or edge-case item as physically tested.
 
 **Primary phone**
 

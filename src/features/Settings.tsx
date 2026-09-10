@@ -193,8 +193,13 @@ export function Settings({
       <section className="settings-section">
         <h2>Your data</h2>
         <p className="small">
-          Stored only in this browser on this device. Safari may remove website data, so keep occasional
-          backups in a safe place. JSON backups contain readable personal information.
+          Your history is saved in this browser on this device. If you enable Partner Sharing, only the cycle
+          information you choose is shared as encrypted data. Diary, symptoms, moods and private notes stay
+          local.
+        </p>
+        <p className="small">
+          Safari may remove website data, so keep occasional backups in a safe place. JSON backups contain
+          readable personal information.
         </p>
         <div className="settings-actions">
           <button

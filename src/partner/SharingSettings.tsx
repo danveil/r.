@@ -89,7 +89,7 @@ export default function SharingSettings({ demo = false }: { demo?: boolean }) {
         <p>Off in this demo. Sample information is never uploaded.</p>
       ) : !connection ? (
         <>
-          <p>No partner access. Your cycle stays only on this device.</p>
+          <p>Sharing is off. No cycle updates are sent to a partner.</p>
           <p>Share selected cycle information with someone you trust. You stay in control.</p>
           <button className="secondary" onClick={() => setSheet('enable')}>
             Enable Partner Sharing

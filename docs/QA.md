@@ -1,5 +1,7 @@
 # Validation report
 
+This preserves the v0.2.1 handoff validation baseline. See [FINAL-HARDENING.md](FINAL-HARDENING.md) for the subsequent privacy-copy build, current dependency decision and rerun results. Physical results reported later are explicitly attributed to the user below.
+
 Validated on 10 September 2026 in Windows with Node 24.15, Vite 6.4.3, Chromium and Playwright WebKit 26.6. All browser data was synthetic and isolated from the development preview and any real user database.
 
 ## Automated results
@@ -56,7 +58,7 @@ Browser handoff and standalone setup have zero axe violations in both engines. T
 
 One initial original diary journey failed across the real September 9/10 midnight boundary: the note remained attached to September 9, while the assertion looked for it on September 10's home screen. The persistence journey now uses a fixed browser time. No production date calculation or assertion was changed; separate rollover/resume tests remain. The complete 26-test rerun passed, followed by all 12 Partner journeys after final setup wording/layout/routing changes. No context-close errors were hidden or timeouts increased.
 
-The exact physical sequence is in [PARTNER-DEPLOYMENT.md](PARTNER-DEPLOYMENT.md): Safari → Copy setup code → root Add to Home Screen → installed app → paste/accept → close/reopen → update → revoke. **Not yet physically verified.** See [the 28-point report](PARTNER-HANDOFF-REPORT.md) for format, lifecycle and explicit privacy answers.
+The exact physical sequence is in [PARTNER-DEPLOYMENT.md](PARTNER-DEPLOYMENT.md). **Later status, recorded 10 September 2026: user-reported physical iPhone verification passed** for Safari invitation → setup code → Home Screen Rayang → import/accept → close/reopen persistence → primary update synchronization → revocation → old-code rejection. This supersedes the earlier pending status; Codex did not independently perform physical-device testing. It does not certify all device accessibility or edge-case checks. See [the 28-point report](PARTNER-HANDOFF-REPORT.md) for historical implementation results and [FINAL-HARDENING.md](FINAL-HARDENING.md) for subsequent validation.
 
 ### Preserved v0.2 coverage
 

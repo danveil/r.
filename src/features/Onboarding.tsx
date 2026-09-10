@@ -80,7 +80,7 @@ export function Onboarding({
             <br className="wide-only" /> and how you feel along the way.
           </p>
           <p className="privacy-line">
-            <Icon name="lock" /> Your information stays on this device.
+            <Icon name="lock" /> Your information stays on this device unless you enable Partner Sharing.
           </p>
           <button className="primary" onClick={next}>
             Let’s begin <Icon name="chevron" />
